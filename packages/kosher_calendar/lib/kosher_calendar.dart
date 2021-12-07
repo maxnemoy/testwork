@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:kosher_calendar/calendar_data.dart';
 import 'package:kosher_calendar/rectangle_button.dart';
 import 'package:kosher_calendar/selector.dart';
+import 'package:kosher_calendar/kosher_date_ext.dart';
 
 class KosherCalendar extends StatefulWidget {
   final bool isKosher;
@@ -26,7 +27,7 @@ class KosherCalendar extends StatefulWidget {
 
 class _KosherCalendarState extends State<KosherCalendar> {
   DateTime _selectedDate = DateTime.now();
-  ComplexDate _currentDate = ComplexDate(initialDate: DateTime.now());
+  DateTime _currentDate = DateTime.now();
   late int _calendarIndex;
 
   @override
@@ -36,15 +37,15 @@ class _KosherCalendarState extends State<KosherCalendar> {
     super.initState();
   }
 
-  List<Widget> buildCalendarView(ComplexDate date) {
+  List<Widget> buildCalendarView(DateTime date) {
     final List<Widget> rows = [];
-    List<List<ComplexDate>> calendar = _calendarIndex == 0 ? CalendarData.getRawGregorianCalendar(date) : CalendarData.getRawJewishCalendar(date);
+    List<List<DateTime?>> calendar = _calendarIndex == 0 ? CalendarData.getRawGregorianCalendar(date) : CalendarData.getRawJewishCalendar(date);
     
     calendar.forEach((week) {
       final List<Widget> children = [];
 
       for (var element in week) {
-        if (element.gregorianDate == null) {
+        if (element == null) {
           children.add(Expanded(child: Container()));
           continue;
         }
@@ -56,7 +57,7 @@ class _KosherCalendarState extends State<KosherCalendar> {
           selectedColor: widget.accentColor,
           onTap: !element.equalsDate(_selectedDate) ? (){
                 setState(() {
-                  _selectedDate = element.gregorianDate!;
+                  _selectedDate = element;
                   _currentDate = element;
                 });
               } : null,
@@ -110,12 +111,12 @@ class _KosherCalendarState extends State<KosherCalendar> {
               isKosher: _calendarIndex == 1,
               onNextMothClick: () {
                 setState(() {
-                  _currentDate.nextMonth();
+                  _currentDate = _currentDate.nextMonth;
                 });
               },
               onPreviosMothClick: () {
                 setState(() {
-                  _currentDate.previosMonth();
+                  _currentDate = _currentDate.previousMonth;
                 });
               },
             ),
@@ -145,7 +146,7 @@ class _CalendarItem extends StatelessWidget {
   final bool isSelected;
   final bool isKosher;
   final Function()? onTap;
-  final ComplexDate date;
+  final DateTime date;
 
 
   @override
@@ -163,7 +164,7 @@ class _CalendarItem extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(22))) : null,
           child: Center(
               child: Text(
-            isKosher ? date.jewishDay.toString() : date.gregorianDay.toString(),
+            isKosher ? date.jewishDay.toString() : date.day.toString(),
             style: Theme.of(context).textTheme.bodyText1?.copyWith(
                 color: isSelected ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
           )),
@@ -175,7 +176,7 @@ class _CalendarItem extends StatelessWidget {
 
 class _MothView extends StatelessWidget {
   final Color secondaryColor;
-  final ComplexDate currentDate;
+  final DateTime currentDate;
   final bool isKosher;
   final Function onNextMothClick;
   final Function onPreviosMothClick;
@@ -194,7 +195,7 @@ class _MothView extends StatelessWidget {
   String getMonthName() {
     return isKosher
         ? "${currentDate.jewishMonthName} ${currentDate.jewishYear}"
-        : "${currentDate.gregorianMonthName} ${currentDate.gregorianYear}";
+        : "${currentDate.gregorianMonthName} ${currentDate.year}";
   }
 
   @override
