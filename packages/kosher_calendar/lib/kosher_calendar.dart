@@ -152,24 +152,30 @@ class _CalendarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: onTap,
-          child: Center(
-              child: Container(
-          height: 45,
-          width: 45,
-          decoration: isSelected ? BoxDecoration(
-              color: selectedColor,
-              borderRadius: const BorderRadius.all(Radius.circular(22))) : null,
-          child: Center(
-              child: Text(
-            isKosher ? date.jewishDay.toString() : date.day.toString(),
-            style: Theme.of(context).textTheme.bodyText1?.copyWith(
-                color: isSelected ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
-          )),
-              ),
+        child: Center(
+          child: SizedBox(
+            height: 45,
+            width: 45,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: onTap,
+              child: Center(
+                  child: Container(
+              height: 45,
+              width: 45,
+              decoration: isSelected ? BoxDecoration(
+                  color: selectedColor,
+                  borderRadius: const BorderRadius.all(Radius.circular(22))) : null,
+              child: Center(
+                  child: Text(
+                isKosher ? date.jewishDay.toString() : date.day.toString(),
+                style: Theme.of(context).textTheme.bodyText1?.copyWith(
+                    color: isSelected ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
+              )),
+                  ),
+                ),
             ),
+          ),
         ));
   }
 }
